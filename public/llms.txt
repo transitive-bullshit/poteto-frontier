@@ -1,0 +1,13 @@
+# The Poteto Frontier
+
+> A playful, self-reported chart of trust in AI agents, inspired by Lauren Tan (@poteto) and named as a pun on the Pareto frontier.
+
+Users place themselves on a curve according to how many AI agents they generally have working on their behalf at any given time. They can optionally add their public X profile photo and download the chart as a PNG. This is a meme, not a measured score or a scientific model. No account or sign-in is required.
+
+Created by Travis Fischer (@transitive_bs).
+
+## Links
+
+- [Site](https://poteto-frontier.vercel.app/): Interactive chart
+- [Source](https://github.com/transitive-bullshit/poteto-frontier): MIT-licensed React app
+- [Inspiration](https://x.com/poteto): Lauren Tan

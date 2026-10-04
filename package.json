@@ -20,6 +20,7 @@
     "fix:lint": "oxlint --fix",
     "dev": "portless run vite --host 127.0.0.1",
     "build": "vite build",
+    "generate:social-image": "tsx scripts/generate-social-image.ts",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {

@@ -21,6 +21,8 @@ Agentation is available in local development for annotations and copied feedback
 
 Vercel Analytics is mounted only in production. Enable Web Analytics for the Vercel project before deploying to collect page views.
 
+Run `pnpm generate:social-image` to regenerate `public/social.png` with Takumi and the shared chart geometry.
+
 CI runs formatting, lint, type checks, offline unit tests, and the Vite build. Builds, PNG exports, dependencies, and supplied reference media stay outside Git. The bundled Virgil font is licensed under the SIL Open Font License; see public/fonts/OFL.txt.
 
 Source context: [Lauren’s agent talk](https://x.com/poteto/status/2102050467505430555), [follow-up interview](https://x.com/poteto/status/2106134336705843554). The app is a playful, self-reported placement, not a measured score or an endorsement.
