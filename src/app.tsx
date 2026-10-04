@@ -34,8 +34,10 @@ import {
 } from './profile'
 import {
   readSavedHandle,
+  readSavedPosition,
   readSavedProfile,
   saveHandle,
+  savePosition,
   saveProfile
 } from './profile-storage'
 
@@ -61,7 +63,7 @@ export function App() {
   const [handle, setHandle] = useState(readSavedHandle)
   const [savedProfile] = useState(readSavedProfile)
   const [profile, setProfile] = useState<Profile>()
-  const [position, setPosition] = useState(0.32)
+  const [position, setPosition] = useState(readSavedPosition)
   const [lookupPending, setLookupPending] = useState(Boolean(savedProfile))
   const [exportPending, setExportPending] = useState(false)
   const [error, setError] = useState('')
@@ -73,6 +75,7 @@ export function App() {
   useEffect(() => () => request.current?.abort(), [])
 
   useEffect(() => saveHandle(handle), [handle])
+  useEffect(() => savePosition(position), [position])
 
   useEffect(() => {
     if (!savedProfile) return

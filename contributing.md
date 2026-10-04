@@ -16,7 +16,7 @@ Agentation is available in local development for annotations and copied feedback
 - `src/frontier.ts` owns the curve, original chart geometry, labels, and SVG generator. Edit this to adjust the chart.
 - `src/app.tsx` handles placement and the profile form. Dragging projects onto the curve; arrow keys, Home, and End also work.
 - `src/profile.ts` validates handles and the public FxTwitter profile response, then embeds the profile photo. This third-party service may be unavailable or rate limited. Handles are sent to FxTwitter and photos fetched from X’s image CDN.
-- `src/profile-storage.ts` remembers the handle and public photo URL locally, restoring the photo after refresh without another profile lookup.
+- `src/profile-storage.ts` remembers the handle, public photo URL, and curve placement locally, restoring them after refresh without another profile lookup.
 - `src/export.ts` renders the same SVG with Takumi WASM and the bundled Virgil font. Rendering and downloads happen locally.
 
 Vercel Analytics is mounted only in production. Enable Web Analytics for the Vercel project before deploying to collect page views.

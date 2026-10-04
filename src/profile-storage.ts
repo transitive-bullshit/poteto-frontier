@@ -4,6 +4,8 @@ import { avatarUrlSchema, handleSchema, type Profile } from './profile'
 
 const handleKey = 'poteto-frontier.handle'
 const profileKey = 'poteto-frontier.profile'
+const positionKey = 'poteto-frontier.position'
+const positionSchema = z.number().min(0).max(1)
 const storedProfileSchema = z.object({
   handle: handleSchema,
   name: z.string(),
@@ -25,6 +27,26 @@ export function saveHandle(handle: string): void {
     localStorage.setItem(handleKey, handle)
   } catch {
     // Storage may be unavailable; the current session still works
+  }
+}
+
+export function readSavedPosition(): number {
+  try {
+    const value = localStorage.getItem(positionKey)
+    return positionSchema.safeParse(JSON.parse(value ?? 'null')).data ?? 0.32
+  } catch {
+    return 0.32
+  }
+}
+
+export function savePosition(position: number): void {
+  try {
+    localStorage.setItem(
+      positionKey,
+      JSON.stringify(positionSchema.parse(position))
+    )
+  } catch {
+    // Storage may be unavailable; placement still works for this session
   }
 }
 
