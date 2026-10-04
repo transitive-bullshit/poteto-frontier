@@ -160,7 +160,8 @@ main {
 .chart-section {
   min-width: 0;
 }
-.chart-question {
+.chart-question,
+.chart-footnote {
   width: min(32rem, calc(100% * 1568 / 1751));
   margin: 18px 0 0;
   /* Match the horizontal center of the SVG's x-axis label. */
@@ -171,6 +172,10 @@ main {
   line-height: 1.6;
   text-align: center;
   text-wrap: pretty;
+}
+.chart-footnote {
+  margin-top: 10px;
+  font-size: 12px;
 }
 .chart {
   position: relative;

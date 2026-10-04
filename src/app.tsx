@@ -280,6 +280,11 @@ export function App() {
           <p className='chart-question'>
             How many agents do you generally have working on your behalf?
           </p>
+          <p className='chart-footnote'>
+            More agents isn’t always better. Building structure and verifiable
+            processes to earn trust in agent autonomy is a valuable AI
+            engineering skill anywhere on this curve.
+          </p>
         </section>
 
         <aside className='controls'>
