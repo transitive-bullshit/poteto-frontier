@@ -96,6 +96,16 @@ export function App() {
 
   async function findProfile(event: FormEvent) {
     event.preventDefault()
+    if (!handle.trim()) {
+      request.current?.abort()
+      setLookupPending(false)
+      setProfile(undefined)
+      setHandle('')
+      setError('')
+      saveHandle('')
+      saveProfile()
+      return
+    }
     const parsed = handleSchema.safeParse(handle)
     if (!parsed.success) {
       setError('')
