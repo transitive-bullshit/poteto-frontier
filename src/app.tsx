@@ -275,8 +275,7 @@ export function App() {
             </div>
           </div>
           <p className='chart-question'>
-            How many agents do you generally have working on your behalf at any
-            given time?
+            How many agents do you generally have working on your behalf?
           </p>
         </section>
 
