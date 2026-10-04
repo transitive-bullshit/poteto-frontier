@@ -41,6 +41,8 @@
   --border: #d5d3d9;
   --input: #d5d3d9;
   --ring: #8e8b94;
+  --link-underline-start: #008f87;
+  --link-underline-end: #e9573f;
   --radius: 0.375rem;
   font-family:
     Inter,
@@ -97,7 +99,11 @@ a {
 .link:focus,
 .link:hover {
   border-bottom-color: transparent;
-  background-image: linear-gradient(90.68deg, #737276 0.26%, #252525 102.37%);
+  background-image: linear-gradient(
+    90.68deg in oklab,
+    var(--link-underline-start) 0.26%,
+    var(--link-underline-end) 102.37%
+  );
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 100% 0.1rem;
@@ -111,7 +117,7 @@ a {
     transition: none;
   }
 }
-a:focus-visible,
+a:not([data-slot='button']):focus-visible,
 [role='slider']:focus-visible {
   outline: 2px solid #6065aa;
   outline-offset: 5px;
@@ -155,6 +161,7 @@ main {
   font-size: 14px;
   line-height: 1.6;
   text-align: center;
+  text-wrap: pretty;
 }
 .chart {
   position: relative;
@@ -238,6 +245,7 @@ h2 {
   font-weight: 500;
   line-height: 1.13;
   letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 .intro {
   color: #77757b;
@@ -254,13 +262,24 @@ h2 {
   color: #ab3a4b;
 }
 footer {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   gap: 16px;
   padding: 22px 0 30px;
   border-top: 1px solid #e3e2e5;
   color: #929096;
   font-size: 12px;
+}
+footer > .link {
+  justify-self: end;
+}
+.footer-social-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted-foreground);
 }
 .sr-only {
   position: absolute;
@@ -349,8 +368,14 @@ footer {
     min-height: 20px;
   }
   footer {
-    flex-wrap: wrap;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 12px;
     line-height: 1.6;
+    text-align: center;
+  }
+  footer > .link {
+    justify-self: center;
   }
 }
 

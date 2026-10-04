@@ -20,6 +20,6 @@ X handle → validated public profile and embedded photo → one normalized curv
 - Position always stays on the curve. Preserve pointer, touch, and keyboard behavior.
 - Downloads must use Takumi. Do not substitute a browser screenshot or canvas renderer.
 - Profile lookup depends on FxTwitter and X’s public image CDN; show failures honestly.
-- No account authentication, storage, or backend. Never embed personal X credentials.
+- No account authentication or backend. The handle and public profile photo URL persist in localStorage. Never embed personal X credentials.
 - Generated PNGs, reference media, build output, and node_modules are ignored. Bundled font and its license are source assets.
 - readme.md is deliberately brief; implementation details belong in contributing.md.

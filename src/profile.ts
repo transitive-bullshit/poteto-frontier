@@ -9,18 +9,31 @@ export const handleSchema = z
     z.string().regex(/^[a-zA-Z0-9_]{1,15}$/, 'Enter an X handle, like @poteto')
   )
 
+export const avatarUrlSchema = z
+  .url()
+  .refine((value) => {
+    const url = new URL(value)
+    return url.protocol === 'https:' && url.hostname === 'pbs.twimg.com'
+  }, 'That profile photo is unavailable')
+  .transform((value) => {
+    const url = new URL(value)
+    url.pathname = url.pathname.replace(/_normal(?=\.[a-z]+$)/i, '_400x400')
+    return url.href
+  })
+
 const responseSchema = z.object({
   code: z.literal(200),
   user: z.object({
     name: z.string(),
     screen_name: z.string(),
-    avatar_url: z.url()
+    avatar_url: avatarUrlSchema
   })
 })
 
 export interface Profile {
   handle: string
   name: string
+  avatarUrl: string
   avatarDataUrl: string
 }
 
@@ -56,6 +69,7 @@ export async function lookupProfile(
   return {
     handle: user.screen_name,
     name: user.name,
+    avatarUrl: user.avatar_url,
     avatarDataUrl: await loadAvatar(user.avatar_url, signal)
   }
 }
@@ -64,11 +78,7 @@ export async function loadAvatar(
   rawUrl: string,
   signal?: AbortSignal
 ): Promise<string> {
-  const avatar = new URL(rawUrl)
-  if (avatar.protocol !== 'https:' || avatar.hostname !== 'pbs.twimg.com') {
-    throw new Error('That profile photo is unavailable')
-  }
-  avatar.pathname = avatar.pathname.replace(/_normal(?=\.[a-z]+$)/i, '_400x400')
+  const avatar = avatarUrlSchema.parse(rawUrl)
   const photo = await ky
     .get(avatar, { signal, timeout: 12_000, retry: 0 })
     .blob()
