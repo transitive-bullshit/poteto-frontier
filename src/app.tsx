@@ -98,7 +98,8 @@ export function App() {
     event.preventDefault()
     const parsed = handleSchema.safeParse(handle)
     if (!parsed.success) {
-      setError('Enter an X handle, like @poteto')
+      setError('')
+      toast.add({ title: 'Enter an X handle, like @poteto', type: 'error' })
       return
     }
     request.current?.abort()
