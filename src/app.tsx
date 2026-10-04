@@ -286,8 +286,7 @@ export function App() {
           <div className='controls-heading'>
             <h2>Where do you land?</h2>
             <p className='intro'>
-              Add your X handle, then place yourself along the curve by dragging
-              your pfp
+              Add your X handle, then drag your photo along the curve
             </p>
           </div>
 
