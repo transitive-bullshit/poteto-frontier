@@ -1,0 +1,305 @@
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+  type PointerEvent
+} from 'react'
+
+import { Button } from '@/components/ui/button'
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText
+} from '@/components/ui/input-group'
+import { cn } from '@/lib/utils'
+
+import {
+  CHART_HEIGHT,
+  CHART_WIDTH,
+  createChartSvg,
+  nearestPosition,
+  pointOnCurve,
+  stageFor
+} from './frontier'
+import { handleSchema, lookupProfile, type Profile } from './profile'
+
+const baseChart = createChartSvg()
+
+export function App() {
+  const [handle, setHandle] = useState('')
+  const [profile, setProfile] = useState<Profile>()
+  const [position, setPosition] = useState(0.32)
+  const [lookupPending, setLookupPending] = useState(false)
+  const [exportPending, setExportPending] = useState(false)
+  const [error, setError] = useState('')
+  const [exportMessage, setExportMessage] = useState('')
+  const request = useRef<AbortController | undefined>(undefined)
+  const chart = useRef<HTMLDivElement>(null)
+  const dragPointer = useRef<number | undefined>(undefined)
+  const point = pointOnCurve(position)
+
+  useEffect(() => () => request.current?.abort(), [])
+
+  async function findProfile(event: FormEvent) {
+    event.preventDefault()
+    const parsed = handleSchema.safeParse(handle)
+    if (!parsed.success) {
+      setError('Enter an X handle, like @poteto')
+      return
+    }
+    request.current?.abort()
+    const controller = new AbortController()
+    request.current = controller
+    setLookupPending(true)
+    setError('')
+    setExportMessage('')
+    // A pending or failed new lookup must not export the previous person's photo
+    setProfile(undefined)
+    try {
+      const result = await lookupProfile(parsed.data, controller.signal)
+      if (!controller.signal.aborted) setProfile(result)
+    } catch {
+      if (!controller.signal.aborted) {
+        setError(
+          'Couldn’t load that profile — check the handle or try again in a moment'
+        )
+      }
+    } finally {
+      if (!controller.signal.aborted) setLookupPending(false)
+    }
+  }
+
+  function moveToPointer(event: PointerEvent<HTMLDivElement>) {
+    const bounds = chart.current?.getBoundingClientRect()
+    if (!bounds) return
+    setPosition(
+      nearestPosition(
+        ((event.clientX - bounds.left) / bounds.width) * CHART_WIDTH,
+        ((event.clientY - bounds.top) / bounds.height) * CHART_HEIGHT
+      )
+    )
+    setExportMessage('')
+  }
+
+  function startDrag(event: PointerEvent<HTMLDivElement>) {
+    if (!event.isPrimary || event.button !== 0) return
+    dragPointer.current = event.pointerId
+    event.currentTarget.setPointerCapture(event.pointerId)
+    moveToPointer(event)
+  }
+
+  function moveDrag(event: PointerEvent<HTMLDivElement>) {
+    if (dragPointer.current === event.pointerId) moveToPointer(event)
+  }
+
+  function endDrag(event: PointerEvent<HTMLDivElement>) {
+    if (dragPointer.current === event.pointerId) dragPointer.current = undefined
+  }
+
+  function moveWithKeys(event: KeyboardEvent<HTMLDivElement>) {
+    const step = event.shiftKey ? 0.05 : 0.01
+    const change: Record<string, number> = {
+      ArrowLeft: -step,
+      ArrowDown: -step,
+      ArrowRight: step,
+      ArrowUp: step
+    }
+    if (event.key in change) {
+      event.preventDefault()
+      setPosition((current) =>
+        Math.max(0, Math.min(1, current + (change[event.key] ?? 0)))
+      )
+      setExportMessage('')
+    } else if (event.key === 'Home' || event.key === 'End') {
+      event.preventDefault()
+      setPosition(event.key === 'Home' ? 0 : 1)
+      setExportMessage('')
+    }
+  }
+
+  async function download() {
+    if (!profile || exportPending || lookupPending) return
+    setExportPending(true)
+    setError('')
+    setExportMessage('')
+    try {
+      const { renderChartPng } = await import('./export')
+      const blob = await renderChartPng({ position, ...profile })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `poteto-frontier-${profile.handle}.png`
+      link.click()
+      setTimeout(() => URL.revokeObjectURL(url), 10_000)
+      setExportMessage('Your PNG is ready')
+    } catch {
+      setError('Couldn’t render your PNG — please try again')
+    } finally {
+      setExportPending(false)
+    }
+  }
+
+  return (
+    <main>
+      <header className='masthead'>
+        <a className='wordmark' href='/'>
+          The Poteto Frontier
+        </a>
+        <a
+          className='link source-link'
+          href='https://x.com/poteto'
+          target='_blank'
+          rel='noreferrer'
+        >
+          inspired by @poteto
+        </a>
+      </header>
+      <h1 className='sr-only'>The Poteto Frontier</h1>
+      <div className='workspace'>
+        <section
+          className='chart-section'
+          aria-label='Trust versus number of agents'
+        >
+          <div
+            className='chart'
+            ref={chart}
+            onPointerDown={startDrag}
+            onPointerMove={moveDrag}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onLostPointerCapture={() => {
+              dragPointer.current = undefined
+            }}
+          >
+            <div
+              className='chart-drawing'
+              aria-hidden='true'
+              dangerouslySetInnerHTML={{ __html: baseChart }}
+            />
+            <div
+              className={cn(
+                'marker',
+                profile && 'has-profile',
+                position > 0.75 && 'near-right',
+                position < 0.15 && 'near-left'
+              )}
+              style={{
+                left: `${(point.x / CHART_WIDTH) * 100}%`,
+                top: `${(point.y / CHART_HEIGHT) * 100}%`
+              }}
+              role='slider'
+              tabIndex={0}
+              aria-label='Your position on the Poteto Frontier'
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(position * 100)}
+              aria-valuetext={stageFor(position)}
+              onKeyDown={moveWithKeys}
+            >
+              {profile ? (
+                <img src={profile.avatarDataUrl} alt='' draggable={false} />
+              ) : (
+                <span className='marker-dot' />
+              )}
+              <span className='marker-label'>
+                {profile ? `@${profile.handle}` : 'you'}
+              </span>
+            </div>
+          </div>
+          <p className='chart-question'>
+            How many agents do you generally have working on your behalf at any
+            given time?
+          </p>
+        </section>
+
+        <aside className='controls'>
+          <div className='controls-heading'>
+            <h2>Where do you land?</h2>
+            <p className='intro'>
+              Add your X photo, then drag it along the curve
+            </p>
+          </div>
+
+          <form onSubmit={findProfile}>
+            <FieldGroup className='gap-3'>
+              <Field data-invalid={Boolean(error && !profile)}>
+                <FieldLabel htmlFor='handle'>Your X handle</FieldLabel>
+                <InputGroup className='h-11'>
+                  <InputGroupInput
+                    id='handle'
+                    name='handle'
+                    value={handle}
+                    onChange={(event) => {
+                      setHandle(event.target.value)
+                      setError('')
+                    }}
+                    placeholder='poteto'
+                    autoCapitalize='none'
+                    autoCorrect='off'
+                    spellCheck={false}
+                    autoComplete='off'
+                    aria-describedby='feedback'
+                    aria-invalid={Boolean(error && !profile)}
+                    maxLength={16}
+                  />
+                  <InputGroupAddon align='inline-start'>
+                    <InputGroupText aria-hidden='true'>@</InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </Field>
+              <Field>
+                <Button
+                  variant='outline'
+                  className='profile-button h-11 w-full'
+                  disabled={lookupPending}
+                  type='submit'
+                >
+                  {lookupPending
+                    ? 'Finding your photo…'
+                    : profile
+                      ? 'Update photo'
+                      : 'Add my photo'}
+                </Button>
+              </Field>
+            </FieldGroup>
+          </form>
+
+          <Button
+            className='download-button h-11 w-full'
+            type='button'
+            onClick={download}
+            disabled={!profile || lookupPending || exportPending}
+          >
+            <DownloadIcon data-icon='inline-start' />
+            {exportPending ? 'Rendering PNG…' : 'Download my chart'}
+          </Button>
+          <div
+            id='feedback'
+            className={cn('feedback', error && 'error')}
+            hidden={!error && !exportMessage}
+            role='status'
+            aria-live='polite'
+          >
+            {error || exportMessage}
+          </div>
+        </aside>
+      </div>
+      <footer>
+        <span>More agents, more trust, more letting go</span>
+        <a
+          className='link'
+          href='https://x.com/poteto/status/2102050467505430555'
+          target='_blank'
+          rel='noreferrer'
+        >
+          Lauren’s original talk
+        </a>
+      </footer>
+    </main>
+  )
+}
+import { DownloadIcon } from 'lucide-react'

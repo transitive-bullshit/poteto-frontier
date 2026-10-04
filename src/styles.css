@@ -1,0 +1,366 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: Virgil;
+  src: url('/fonts/chart.woff2') format('woff2');
+  font-display: swap;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+}
+
+:root {
+  --background: #faf9fc;
+  --foreground: #282828;
+  --primary: #282828;
+  --primary-foreground: #ffffff;
+  --secondary: #eeedf1;
+  --secondary-foreground: #48454e;
+  --muted: #f0eef3;
+  --muted-foreground: #737276;
+  --accent: #eeedf1;
+  --accent-foreground: #282828;
+  --destructive: #ab3a4b;
+  --border: #d5d3d9;
+  --input: #d5d3d9;
+  --ring: #8e8b94;
+  --radius: 0.375rem;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: #282828;
+  background: #faf9fc;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+a,
+[role='slider'] {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+a {
+  color: inherit;
+  text-decoration-color: #b0afb2;
+  text-underline-offset: 4px;
+}
+
+.link {
+  padding-bottom: 0.15em;
+  transition: unset;
+  text-decoration: none !important;
+  border-color: var(--color-muted-foreground);
+  border-bottom-style: solid;
+  border-bottom-width: 0.1rem;
+  background: transparent;
+  background-origin: border-box;
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+  background-size: 0 0.1rem;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.link:focus,
+.link:hover {
+  border-bottom-color: transparent;
+  background-image: linear-gradient(90.68deg, #737276 0.26%, #252525 102.37%);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.1rem;
+  transition-property: background-position, background-size;
+  transition-duration: 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link:focus,
+  .link:hover {
+    transition: none;
+  }
+}
+a:focus-visible,
+[role='slider']:focus-visible {
+  outline: 2px solid #6065aa;
+  outline-offset: 5px;
+}
+main {
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+.masthead {
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid #e3e2e5;
+}
+.wordmark {
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.source-link {
+  font-size: 14px;
+  color: #737276;
+}
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: 56px;
+  align-items: center;
+  padding: 34px 0 40px;
+}
+.chart-section {
+  min-width: 0;
+}
+.chart-question {
+  max-width: 32rem;
+  margin: 18px auto 0;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+}
+.chart {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1751 / 1396;
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+}
+.chart-drawing {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.chart-drawing svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.marker {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border: 2px solid #282828;
+  border-radius: 50%;
+  background: #faf9fc;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  box-shadow: 0 0 0 4px #faf9fc;
+}
+.marker:active {
+  cursor: grabbing;
+}
+.marker:focus-visible {
+  outline-offset: 8px;
+}
+.marker img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.marker-dot {
+  width: 9px;
+  height: 9px;
+  background: #282828;
+  border-radius: 50%;
+}
+.marker-label {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: Virgil, cursive;
+  font-size: 25px;
+  font-weight: 600;
+  background: #faf9fc;
+  padding: 0 5px;
+  pointer-events: none;
+}
+
+.marker.near-right .marker-label {
+  left: auto;
+  right: -8px;
+  transform: none;
+  bottom: auto;
+  top: calc(100% + 9px);
+}
+
+.marker.near-left .marker-label {
+  left: -8px;
+  transform: none;
+}
+h2 {
+  margin: 0;
+  font-size: 39px;
+  font-weight: 500;
+  line-height: 1.13;
+  letter-spacing: -0.035em;
+}
+.intro {
+  color: #77757b;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+}
+.feedback {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #929096;
+}
+.feedback.error {
+  color: #ab3a4b;
+}
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 0 30px;
+  border-top: 1px solid #e3e2e5;
+  color: #929096;
+  font-size: 12px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 1500px) {
+  .workspace {
+    padding-top: 50px;
+  }
+}
+@media (max-width: 1000px) {
+  main {
+    padding: 0 28px;
+  }
+  .workspace {
+    gap: 28px;
+    grid-template-columns: minmax(0, 1fr) 230px;
+  }
+  .marker {
+    width: 38px;
+    height: 38px;
+  }
+  .marker-label {
+    font-size: 22px;
+  }
+  h2 {
+    font-size: 34px;
+  }
+}
+@media (max-width: 760px) {
+  main {
+    padding: 0 20px;
+  }
+  .masthead {
+    min-height: 70px;
+  }
+  .source-link {
+    font-size: 12px;
+  }
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 32px;
+    padding: 26px 0 28px;
+  }
+  .chart {
+    width: 100%;
+  }
+  .marker {
+    width: 34px;
+    height: 34px;
+    border-width: 1.5px;
+    box-shadow: 0 0 0 2px #faf9fc;
+  }
+  .marker-label {
+    font-size: 17px;
+    bottom: auto;
+    top: calc(100% + 6px);
+  }
+  .marker.near-left .marker-label {
+    top: auto;
+    bottom: calc(100% + 5px);
+  }
+  .controls {
+    max-width: 430px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  h2 {
+    font-size: 30px;
+    margin: 0;
+  }
+  .intro {
+    margin: 0;
+  }
+  .feedback {
+    min-height: 20px;
+  }
+  footer {
+    flex-wrap: wrap;
+    line-height: 1.6;
+  }
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.controls-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

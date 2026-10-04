@@ -1,0 +1,11 @@
+{
+  "extends": "@fisch0920/config/tsconfig-react",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+    "paths": { "@/*": ["./src/*"] },
+    "incremental": true
+  },
+  "include": ["src", "test", "*.config.ts"],
+  "exclude": ["node_modules", "dist"]
+}
