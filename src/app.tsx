@@ -183,7 +183,7 @@ export function App() {
   }
 
   async function download() {
-    if (!profile || exportPending || lookupPending) return
+    if (exportPending || lookupPending) return
     setExportPending(true)
     setError('')
     try {
@@ -192,7 +192,9 @@ export function App() {
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `poteto-frontier-${profile.handle}.png`
+      link.download = profile
+        ? `poteto-frontier-${profile.handle}.png`
+        : 'poteto-frontier.png'
       link.click()
       setTimeout(() => URL.revokeObjectURL(url), 10_000)
       toast.add({ title: 'Your PNG is ready', type: 'success' })
@@ -333,7 +335,7 @@ export function App() {
             className='download-button h-11 w-full'
             type='button'
             onClick={download}
-            disabled={!profile || lookupPending || exportPending}
+            disabled={lookupPending || exportPending}
           >
             <DownloadIcon data-icon='inline-start' />
             {exportPending ? 'Rendering PNG…' : 'Download my chart'}
