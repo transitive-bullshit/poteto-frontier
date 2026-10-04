@@ -1,3 +1,5 @@
+[![The Poteto Frontier](public/example.png)](https://poteto-frontier.vercel.app)
+
 # The Poteto Frontier
 
 Where do you land between one closely watched agent and thousands of agents you trust?
