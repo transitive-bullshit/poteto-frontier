@@ -2,7 +2,7 @@ import init, { Renderer } from '@takumi-rs/wasm'
 import wasmUrl from '@takumi-rs/wasm/takumi_wasm_bg.wasm?url'
 import ky from 'ky'
 
-import { CHART_FONT_NAME, CHART_HEIGHT, CHART_WIDTH } from './frontier'
+import { CHART_EXPORT_HEIGHT, CHART_FONT_NAME, CHART_WIDTH } from './frontier'
 
 interface RenderRequest {
   svg: string
@@ -21,9 +21,9 @@ self.onmessage = async ({ data }: MessageEvent<RenderRequest>) => {
         type: 'image',
         src: data.svg,
         width: CHART_WIDTH,
-        height: CHART_HEIGHT
+        height: CHART_EXPORT_HEIGHT
       },
-      { width: CHART_WIDTH, height: CHART_HEIGHT, format: 'png' }
+      { width: CHART_WIDTH, height: CHART_EXPORT_HEIGHT, format: 'png' }
     )
     self.postMessage({ png: png.buffer }, { transfer: [png.buffer] })
     renderer.free()

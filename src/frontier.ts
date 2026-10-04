@@ -1,6 +1,7 @@
 /** Geometry is expressed in the original chart's 1751 × 1396 coordinates. */
 export const CHART_WIDTH = 1751
 export const CHART_HEIGHT = 1396
+export const CHART_EXPORT_HEIGHT = 1350
 export const CHART_VIEWBOX = `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`
 export const CHART_BACKGROUND = '#faf9fc'
 export const POTETO_AVATAR_URL =
@@ -149,7 +150,10 @@ export function curvePath(): string {
 }
 
 /** The source chart, with an optional profile marker constrained to its curve. */
-export function createChartSvg(options: ChartSvgOptions = {}): string {
+export function createChartSvg(
+  options: ChartSvgOptions = {},
+  height = CHART_HEIGHT
+): string {
   const title = options.title ?? 'The Poteto Frontier'
   const titleMarkup = title
     ? `<text x="875.5" y="76" text-anchor="middle" font-size="62" font-weight="400">${escapeXml(title)}</text>`
@@ -226,11 +230,11 @@ export function createChartSvg(options: ChartSvgOptions = {}): string {
     <text x="1510" y="97" text-anchor="end" font-size="32" font-weight="400">@poteto</text>
   </g>`
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${CHART_WIDTH}" height="${CHART_HEIGHT}" viewBox="${CHART_VIEWBOX}" role="img" aria-labelledby="frontier-title frontier-description">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${CHART_WIDTH}" height="${height}" viewBox="0 0 ${CHART_WIDTH} ${height}" role="img" aria-labelledby="frontier-title frontier-description">
   <title id="frontier-title">${escapeXml(title || 'Agent trust chart')}</title>
   <desc id="frontier-description">Trust increases as the number of agents increases, along a rising curve that gradually flattens. Inspired by @poteto.</desc>
   ${fontStyle}
-  <rect width="${CHART_WIDTH}" height="${CHART_HEIGHT}" fill="${CHART_BACKGROUND}"/>
+  <rect width="${CHART_WIDTH}" height="${height}" fill="${CHART_BACKGROUND}"/>
   <g fill="${CHART_INK}" font-family='${escapeXml(CHART_FONT_FAMILY)}' font-style="normal" font-weight="400">
     ${titleMarkup}
     <g fill="none" stroke="${CHART_INK}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">

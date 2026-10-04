@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import {
+  CHART_EXPORT_HEIGHT,
   createChartSvg,
   POTETO_AVATAR_URL,
   type ChartSvgOptions
@@ -10,10 +11,13 @@ import { loadAvatar } from './profile'
 const resultSchema = z.object({ png: z.instanceof(ArrayBuffer) })
 
 export async function renderChartPng(options: ChartSvgOptions): Promise<Blob> {
-  const svg = createChartSvg({
-    ...options,
-    potetoAvatarDataUrl: await loadAvatar(POTETO_AVATAR_URL)
-  })
+  const svg = createChartSvg(
+    {
+      ...options,
+      potetoAvatarDataUrl: await loadAvatar(POTETO_AVATAR_URL)
+    },
+    CHART_EXPORT_HEIGHT
+  )
   const worker = new Worker(new URL('./render.worker.ts', import.meta.url), {
     type: 'module'
   })
