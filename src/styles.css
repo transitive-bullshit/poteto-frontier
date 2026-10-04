@@ -161,8 +161,11 @@ main {
   min-width: 0;
 }
 .chart-question {
-  max-width: 32rem;
-  margin: 18px auto 0;
+  width: min(32rem, calc(100% * 1568 / 1751));
+  margin: 18px 0 0;
+  /* Match the horizontal center of the SVG's x-axis label. */
+  margin-inline-start: calc(100% * 967 / 1751);
+  transform: translateX(-50%);
   color: var(--muted-foreground);
   font-size: 14px;
   line-height: 1.6;
