@@ -15,6 +15,7 @@ import {
   InputGroupInput,
   InputGroupText
 } from '@/components/ui/input-group'
+import { toast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
 
 import {
@@ -62,7 +63,6 @@ export function App() {
   const [lookupPending, setLookupPending] = useState(Boolean(savedProfile))
   const [exportPending, setExportPending] = useState(false)
   const [error, setError] = useState('')
-  const [exportMessage, setExportMessage] = useState('')
   const request = useRef<AbortController | undefined>(undefined)
   const chart = useRef<HTMLDivElement>(null)
   const dragPointer = useRef<number | undefined>(undefined)
@@ -106,7 +106,6 @@ export function App() {
     request.current = controller
     setLookupPending(true)
     setError('')
-    setExportMessage('')
     // A pending or failed new lookup must not export the previous person's photo
     setProfile(undefined)
     saveProfile()
@@ -136,7 +135,6 @@ export function App() {
         ((event.clientY - bounds.top) / bounds.height) * CHART_HEIGHT
       )
     )
-    setExportMessage('')
   }
 
   function startDrag(event: PointerEvent<HTMLDivElement>) {
@@ -167,11 +165,9 @@ export function App() {
       setPosition((current) =>
         Math.max(0, Math.min(1, current + (change[event.key] ?? 0)))
       )
-      setExportMessage('')
     } else if (event.key === 'Home' || event.key === 'End') {
       event.preventDefault()
       setPosition(event.key === 'Home' ? 0 : 1)
-      setExportMessage('')
     }
   }
 
@@ -179,7 +175,6 @@ export function App() {
     if (!profile || exportPending || lookupPending) return
     setExportPending(true)
     setError('')
-    setExportMessage('')
     try {
       const { renderChartPng } = await import('./export')
       const blob = await renderChartPng({ position, ...profile })
@@ -189,7 +184,7 @@ export function App() {
       link.download = `poteto-frontier-${profile.handle}.png`
       link.click()
       setTimeout(() => URL.revokeObjectURL(url), 10_000)
-      setExportMessage('Your PNG is ready')
+      toast.add({ title: 'Your PNG is ready', type: 'success' })
     } catch {
       setError('Couldn’t render your PNG — please try again')
     } finally {
@@ -274,7 +269,8 @@ export function App() {
           <div className='controls-heading'>
             <h2>Where do you land?</h2>
             <p className='intro'>
-              Add your X photo, then drag it along the curve
+              Add your X handle, then place yourself along the curve by dragging
+              your pfp
             </p>
           </div>
 
@@ -334,11 +330,11 @@ export function App() {
           <div
             id='feedback'
             className={cn('feedback', error && 'error')}
-            hidden={!error && !exportMessage}
+            hidden={!error}
             role='status'
             aria-live='polite'
           >
-            {error || exportMessage}
+            {error}
           </div>
         </aside>
       </div>

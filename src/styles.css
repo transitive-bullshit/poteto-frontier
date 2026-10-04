@@ -9,6 +9,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -29,6 +31,8 @@
 :root {
   --background: #faf9fc;
   --foreground: #282828;
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
   --primary: #282828;
   --primary-foreground: #ffffff;
   --secondary: #eeedf1;
@@ -239,7 +243,7 @@ main {
   left: -8px;
   transform: none;
 }
-h2 {
+.controls h2 {
   margin: 0;
   font-size: 39px;
   font-weight: 500;
@@ -313,7 +317,7 @@ footer > .link {
   .marker-label {
     font-size: 22px;
   }
-  h2 {
+  .controls h2 {
     font-size: 34px;
   }
 }
@@ -357,7 +361,7 @@ footer > .link {
     width: 100%;
     margin: 0 auto;
   }
-  h2 {
+  .controls h2 {
     font-size: 30px;
     margin: 0;
   }

@@ -2,6 +2,8 @@ import { Analytics } from '@vercel/analytics/react'
 import { lazy, StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 
+import { Toaster } from '@/components/ui/toast'
+
 import { App } from './app'
 import './styles.css'
 
@@ -28,6 +30,9 @@ if (!root) throw new Error('Missing app root')
 createRoot(root).render(
   <StrictMode>
     <App />
+    <Toaster
+      viewportClassName={DevAgentation ? 'max-sm:bottom-20' : undefined}
+    />
     {import.meta.env.PROD && <Analytics mode='production' />}
     {DevAgentation && (
       <Suspense fallback={null}>
