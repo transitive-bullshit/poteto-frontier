@@ -37,7 +37,7 @@ export interface Profile {
   avatarDataUrl: string
 }
 
-async function asDataUrl(blob: Blob): Promise<string> {
+export async function asDataUrl(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => {

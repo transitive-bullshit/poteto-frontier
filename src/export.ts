@@ -1,3 +1,4 @@
+import ky from 'ky'
 import { z } from 'zod'
 
 import {
@@ -6,7 +7,7 @@ import {
   POTETO_AVATAR_URL,
   type ChartSvgOptions
 } from './frontier'
-import { loadAvatar } from './profile'
+import { asDataUrl } from './profile'
 
 const resultSchema = z.object({ png: z.instanceof(ArrayBuffer) })
 
@@ -14,7 +15,9 @@ export async function renderChartPng(options: ChartSvgOptions): Promise<Blob> {
   const svg = createChartSvg(
     {
       ...options,
-      potetoAvatarDataUrl: await loadAvatar(POTETO_AVATAR_URL)
+      potetoAvatarDataUrl: await asDataUrl(
+        await ky.get(POTETO_AVATAR_URL, { timeout: 12_000, retry: 0 }).blob()
+      )
     },
     CHART_EXPORT_HEIGHT
   )

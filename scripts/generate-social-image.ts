@@ -1,5 +1,4 @@
 import { Renderer } from '@takumi-rs/wasm/node'
-import ky from 'ky'
 import { readFile, writeFile } from 'node:fs/promises'
 
 import {
@@ -16,7 +15,9 @@ import {
 const font = await readFile(
   new URL('../public/fonts/chart.woff2', import.meta.url)
 )
-const photo = await ky.get(POTETO_AVATAR_URL).arrayBuffer()
+const photo = await readFile(
+  new URL(`../public${POTETO_AVATAR_URL}`, import.meta.url)
+)
 const scale = 810 / CHART_WIDTH
 const position = 0.32
 const point = pointOnCurve(position)
@@ -25,7 +26,7 @@ const chart = createChartSvg(
     title: '',
     position,
     fontDataUrl: `data:font/woff2;base64,${font.toString('base64')}`,
-    potetoAvatarDataUrl: `data:image/jpeg;base64,${Buffer.from(photo).toString('base64')}`
+    potetoAvatarDataUrl: `data:image/jpeg;base64,${photo.toString('base64')}`
   },
   CHART_EXPORT_HEIGHT
 )

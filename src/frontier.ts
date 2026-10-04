@@ -4,8 +4,7 @@ export const CHART_HEIGHT = 1396
 export const CHART_EXPORT_HEIGHT = 1350
 export const CHART_VIEWBOX = `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`
 export const CHART_BACKGROUND = '#faf9fc'
-export const POTETO_AVATAR_URL =
-  'https://pbs.twimg.com/profile_images/2093473719830315008/oo09g1Ov_400x400.jpg'
+export const POTETO_AVATAR_URL = '/poteto-avatar.jpg'
 export const CHART_INK = '#252525'
 export const CHART_FONT_NAME = 'Virgil'
 export const CHART_FONT_FAMILY = 'Virgil, "Comic Sans MS", cursive'
